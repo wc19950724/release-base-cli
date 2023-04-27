@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# Except for specific directories and files
+!/bin/
+!/lib/
+!README.md

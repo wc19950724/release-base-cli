@@ -1,0 +1,70 @@
+{
+  "name": "release-base-cli",
+  "version": "0.0.1",
+  "description": "自动生成CHANGELOG.md并发布的工具",
+  "main": "lib/cli.js",
+  "bin": {
+    "release-cli": "bin/cli"
+  },
+  "scripts": {
+    "start": "node lib/cli.js",
+    "build": "yarn fix && rollup -c",
+    "fix": "yarn prettier && tsc && yarn lint",
+    "lint": "eslint **/*.{js,cjs,mjs,ts,cts,mts} --fix",
+    "prettier": "prettier --ignore-path .eslintignore **/*.{js,cjs,mjs,ts,cts,mts} --loglevel warn --write",
+    "prepublishOnly": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wc19950724/release-base-cli.git"
+  },
+  "keywords": [
+    "release",
+    "changelog"
+  ],
+  "author": "948533798@qq.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wc19950724/release-base-cli/issues"
+  },
+  "homepage": "https://github.com/wc19950724/release-base-cli#readme",
+  "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-typescript": "^11.1.0",
+    "@types/minimist": "^1.2.2",
+    "@types/node": "^18.16.1",
+    "@types/semver": "^7.3.13",
+    "@typescript-eslint/parser": "^5.59.1",
+    "chalk-cjs": "^5.2.0",
+    "commander": "^10.0.1",
+    "conventional-changelog-cli": "^2.2.2",
+    "enquirer": "^2.3.6",
+    "eslint": "^8.39.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "execa": "^7.1.1",
+    "ghooks": "^2.0.4",
+    "lint-staged": "^13.2.2",
+    "minimist": "^1.2.8",
+    "prettier": "^2.8.8",
+    "rollup": "^3.21.0",
+    "semver": "^7.5.0",
+    "tslib": "^2.5.0",
+    "typescript": "^5.0.4"
+  },
+  "lint-staged": {
+    "*.{js,cjs,mjs,ts,cts,mts}": [
+      "yarn fix"
+    ]
+  },
+  "config": {
+    "ghooks": {
+      "pre-commit": "npx lint-staged --quiet --concurrent false"
+    }
+  }
+}
