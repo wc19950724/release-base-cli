@@ -11,7 +11,8 @@
     "declaration": false,
     "allowJs": true,
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "newLine": "LF"
   },
   "exclude": ["node_modules", "lib"]
 }

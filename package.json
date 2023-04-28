@@ -27,9 +27,6 @@
     "url": "https://github.com/wc19950724/release-base-cli/issues"
   },
   "homepage": "https://github.com/wc19950724/release-base-cli#readme",
-  "dependencies": {
-    "conventional-changelog-cli": "^2.2.2"
-  },
   "devDependencies": {
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
@@ -43,6 +40,7 @@
     "@typescript-eslint/parser": "^5.59.1",
     "chalk-cjs": "^5.2.0",
     "commander": "^10.0.1",
+    "conventional-changelog-cli": "^2.2.2",
     "enquirer": "^2.3.6",
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",

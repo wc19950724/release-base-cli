@@ -130,7 +130,8 @@ async function main() {
     logger.info("changelog config at:\u{1F447}\n\t", configPath);
     changelogArgs.push("-c", configPath);
   }
-  await run(`conventional-changelog`, changelogArgs);
+  await run("npx", ["conventional-changelog", "-y"]);
+  await run("conventional-changelog", changelogArgs);
 
   const { yes: changelogOk } = await prompt<{ yes: boolean }>({
     type: "confirm",
