@@ -1,4 +1,13 @@
-## 0.0.1-beta.0 (2023-04-28)
+## [0.0.1-rc.0](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-beta.0...v0.0.1-rc.0) (2023-04-28)
+
+
+### Performance Improvements
+
+*  log spacing ([f0fde4f](https://github.com/wc19950724/release-base-cli/commit/f0fde4fe8fc9d2f25afdb7ad5a10e7e08e7c1b26))
+
+
+
+## [0.0.1-beta.0](https://github.com/wc19950724/release-base-cli/compare/b21b6c01151ec9c2320787f789cefaff5a7e4dce...v0.0.1-beta.0) (2023-04-28)
 
 
 ### Bug Fixes
