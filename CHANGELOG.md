@@ -1,3 +1,13 @@
+## [0.0.1-rc.3](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.2...v0.0.1-rc.3) (2023-04-28)
+
+
+### Bug Fixes
+
+*  changelog not define ([efc83f4](https://github.com/wc19950724/release-base-cli/commit/efc83f4b23c44d66178f5635650db6334c4bc5c9))
+*  npx not define ([86e1f18](https://github.com/wc19950724/release-base-cli/commit/86e1f180a2f32b9af5ab20b21816a14e95209435))
+
+
+
 ## [0.0.1-rc.2](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.1...v0.0.1-rc.2) (2023-04-28)
 
 
