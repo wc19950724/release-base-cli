@@ -1,3 +1,12 @@
+## [0.0.1-rc.5](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.4...v0.0.1-rc.5) (2023-04-28)
+
+
+### Performance Improvements
+
+*  standard-changelog ([ff7aeea](https://github.com/wc19950724/release-base-cli/commit/ff7aeeaff98aadc5613b9dc556a8ca3996ac610c))
+
+
+
 ## [0.0.1-rc.4](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.3...v0.0.1-rc.4) (2023-04-28)
 
 
