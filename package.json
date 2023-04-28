@@ -11,8 +11,7 @@
     "build": "pnpm fix && rollup -c",
     "fix": "pnpm prettier && tsc && pnpm lint",
     "lint": "eslint **/*.{js,cjs,mjs,ts,cts,mts} --fix",
-    "prettier": "prettier --ignore-path .eslintignore **/*.{js,cjs,mjs,ts,cts,mts} --write",
-    "prepublishOnly": "pnpm build"
+    "prettier": "prettier --ignore-path .eslintignore **/*.{js,cjs,mjs,ts,cts,mts} --write"
   },
   "repository": {
     "type": "git",
