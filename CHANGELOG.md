@@ -1,3 +1,12 @@
+## [0.0.1-rc.2](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.1...v0.0.1-rc.2) (2023-04-28)
+
+
+### Bug Fixes
+
+*  npx changelog ([535a70b](https://github.com/wc19950724/release-base-cli/commit/535a70bbd565f575e5641179ce31ec3952f1a195))
+
+
+
 ## [0.0.1-rc.1](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.0...v0.0.1-rc.1) (2023-04-28)
 
 
