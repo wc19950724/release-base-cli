@@ -109,6 +109,7 @@ async function main() {
 
   step("Updating package versions...");
   updateVersions(targetVersion);
+  logger.log("Package version updated: ", targetVersion);
 
   // generate changelog
   step("Generating changelog...");
@@ -178,6 +179,8 @@ async function main() {
 
   if (publishOk) {
     await runIfNotDry("git", ["push"]);
+    // Generate & Publish Tag
+    step("Generate & Publish Tag...");
     const { yes: tagOk } = await prompt<{ yes: boolean }>({
       type: "confirm",
       name: "yes",
