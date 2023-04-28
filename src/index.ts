@@ -177,7 +177,6 @@ async function main() {
   });
 
   if (publishOk) {
-    await runIfNotDry("git", ["config", "--global", "push.default", "current"]);
     await runIfNotDry("git", ["push"]);
     const { yes: tagOk } = await prompt<{ yes: boolean }>({
       type: "confirm",
@@ -204,7 +203,7 @@ function updateVersions(version: string) {
   pkgPath = resolve(process.cwd(), "package.json");
   pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
   pkg.version = version;
-  writeFileSync(pkgPath, JSON.stringify(pkg, null, "\t") + "\n");
+  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
 }
 
 main().catch((err) => {
