@@ -1,3 +1,12 @@
+## [0.0.1-rc.1](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.0...v0.0.1-rc.1) (2023-04-28)
+
+
+### Bug Fixes
+
+*  changelog not define ([48ad2d7](https://github.com/wc19950724/release-base-cli/commit/48ad2d7d48c3048d6af194873a66f7ea0da66462))
+
+
+
 ## [0.0.1-rc.0](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-beta.0...v0.0.1-rc.0) (2023-04-28)
 
 
