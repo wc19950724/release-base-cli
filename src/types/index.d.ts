@@ -4,3 +4,8 @@ export interface ProgramOptions {
   test: boolean;
   version: boolean;
 }
+
+export interface StandardChangelogConfig {
+  outfile: string;
+  params: unknown[];
+}

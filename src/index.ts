@@ -1,4 +1,9 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  createWriteStream,
+  existsSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { resolve } from "node:path";
 
 import { program } from "commander";
@@ -9,8 +14,10 @@ import semverInc from "semver/functions/inc";
 import prerelease from "semver/functions/prerelease";
 import valid from "semver/functions/valid";
 
-import { ProgramOptions } from "./types";
+import { ProgramOptions, StandardChangelogConfig } from "./types";
 import logger from "./utils/logger";
+
+const standardChangelog = require("standard-changelog");
 
 let pkgPath = resolve(process.cwd(), "package.json");
 let pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
@@ -18,7 +25,7 @@ const currentVersion = pkg.version;
 
 program.name(pkg.name).version(currentVersion);
 program
-  .option("-c, --config <config>", "example: release-cli -c ./config.js")
+  .option("-c, --config <config>", "example: release-cli -c ./config.json")
   .option(
     "-p, --preId <preId>",
     "example: release-cli -p (alpha | beta | rc | ...)"
@@ -28,7 +35,7 @@ program
 
 const options = program.opts<ProgramOptions>();
 
-const changelogConfig = options.config;
+const changelogConfigPath = options.config;
 const preId = options.preId || prerelease(currentVersion)?.[0]?.toString();
 const isTest = !!options.test;
 
@@ -113,24 +120,21 @@ async function main() {
 
   // generate changelog
   step("Generating changelog...");
-  let configPath = "";
-  if (changelogConfig) {
-    configPath = resolve(changelogConfig);
+  const changelogConfig: StandardChangelogConfig = {
+    outfile: resolve(process.cwd(), "CHANGELOG.md"),
+    params: [
+      {
+        releaseCount: 0,
+      },
+    ],
+  };
+  if (changelogConfigPath) {
+    const customConfig = require(resolve(changelogConfigPath));
+    Object.assign({}, changelogConfig, customConfig);
   }
-  const changelogArgs = [
-    "-p",
-    "angular",
-    "-i",
-    "CHANGELOG.md",
-    "-s",
-    "-r",
-    "0",
-  ];
-  if (configPath) {
-    logger.info("changelog config at:\u{1F447}\n\t", configPath);
-    changelogArgs.push("-c", configPath);
-  }
-  await run("conventional-changelog", changelogArgs);
+  const { outfile, params } = changelogConfig;
+  standardChangelog(...params).pipe(createWriteStream(outfile));
+  // await run("conventional-changelog", changelogArgs);
 
   const { yes: changelogOk } = await prompt<{ yes: boolean }>({
     type: "confirm",

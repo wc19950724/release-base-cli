@@ -27,10 +27,6 @@
     "url": "https://github.com/wc19950724/release-base-cli/issues"
   },
   "homepage": "https://github.com/wc19950724/release-base-cli#readme",
-  "dependencies": {
-    "conventional-changelog": "^3.1.25",
-    "conventional-changelog-cli": "^2.2.2"
-  },
   "devDependencies": {
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
@@ -55,6 +51,7 @@
     "prettier": "^2.8.8",
     "rollup": "^3.21.0",
     "semver": "^7.5.0",
+    "standard-changelog": "^2.0.27",
     "tslib": "^2.5.0",
     "typescript": "^5.0.4"
   },
