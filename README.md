@@ -2,9 +2,11 @@
 
 ```javascript
 // 项目中安装
-pnpm install release-base-cli
-// 通过命令使用
+npm install release-base-cli
+// package.json
 "scripts": {
-    "release": "release-cli"
+    "release": "release-cli",
+    // help & example
+    "release:help": "release-cli -h"
 },
 ```

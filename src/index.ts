@@ -1,32 +1,45 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { program } from "commander";
 import { prompt } from "enquirer";
 import { execa } from "execa";
-import minimist from "minimist";
 import { ReleaseType } from "semver";
 import semverInc from "semver/functions/inc";
 import prerelease from "semver/functions/prerelease";
 import valid from "semver/functions/valid";
 
+import { ProgramOptions } from "./types";
 import logger from "./utils/logger";
-
-program
-  .option(
-    "-c, --config <config>",
-    "Specify the configuration file for conventional-changelog-cli"
-  )
-  .parse(process.argv);
-
-const options = program.opts();
 
 let pkgPath = resolve(process.cwd(), "package.json");
 let pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
 const currentVersion = pkg.version;
-const args = minimist(process.argv.slice(2));
-const preId = args.preid || prerelease(currentVersion)?.[0];
-const isDryRun = args.dry;
+
+program.name(pkg.name).version(currentVersion);
+program
+  .option("-c, --config <config>", "example: release-cli -c ./config.js")
+  .option(
+    "-p, --preId <preId>",
+    "example: release-cli -p (alpha | beta | rc | ...)"
+  )
+  .option("-t, --test", "example: release-cli -t")
+  .parse(process.argv);
+
+const options = program.opts<ProgramOptions>();
+
+const changelogConfig = options.config;
+const preId = options.preId || prerelease(currentVersion)?.[0]?.toString();
+const isTest = !!options.test;
+
+const cmds: string[] = [];
+if (existsSync("package-lock.json")) {
+  cmds.push("npm");
+} else if (existsSync("yarn.lock")) {
+  cmds.push("yarn");
+} else if (existsSync("pnpm-lock.yaml")) {
+  cmds.push("pnpm");
+}
 
 const versionIncrements: ReleaseType[] = [
   "patch",
@@ -46,41 +59,39 @@ const run = (bin: string, args: string[], opts = {}) => {
   }
 };
 const dryRun = async (bin: string, args: string[], opts = {}) =>
-  logger.info(`[dryrun] ${bin} ${args.join(" ")}`, opts);
-const runIfNotDry = isDryRun ? dryRun : run;
-const step = (msg: string) => logger.success(msg);
+  logger.warn(`[test run] ${bin} ${args.join(" ")}  `, JSON.stringify(opts));
+const runIfNotDry = isTest ? dryRun : run;
+const step = (msg: string) => logger.success("\n", msg);
 
 async function main() {
-  let targetVersion = args._[0];
+  let targetVersion = "";
 
-  if (!targetVersion) {
-    // no explicit version, offer suggestions
-    const { release } = await prompt<{
-      release: ReleaseType | "custom";
-    }>({
-      type: "select",
-      name: "release",
-      message: "Select release type",
-      choices: versionIncrements
-        .map((i) => `${i} (${inc(i)})`)
-        .concat(["custom"]),
+  // no explicit version, offer suggestions
+  const { release } = await prompt<{
+    release: ReleaseType | "custom";
+  }>({
+    type: "select",
+    name: "release",
+    message: "Select release type",
+    choices: versionIncrements
+      .map((i) => `${i} (${inc(i)})`)
+      .concat(["custom"]),
+  });
+
+  if (release === "custom") {
+    const { version } = await prompt<{ version: string }>({
+      type: "input",
+      name: "version",
+      message: "Input custom version",
+      initial: currentVersion,
     });
-
-    if (release === "custom") {
-      const { version } = await prompt<{ version: string }>({
-        type: "input",
-        name: "version",
-        message: "Input custom version",
-        initial: currentVersion,
-      });
-      targetVersion = version;
+    targetVersion = version;
+  } else {
+    const releaseMatchArray = release.match(/\((.*)\)/);
+    if (releaseMatchArray?.length) {
+      targetVersion = releaseMatchArray[1];
     } else {
-      const releaseMatchArray = release.match(/\((.*)\)/);
-      if (releaseMatchArray?.length) {
-        targetVersion = releaseMatchArray[1];
-      } else {
-        throw new Error("Version is required!");
-      }
+      throw new Error("Version is required!");
     }
   }
 
@@ -96,19 +107,26 @@ async function main() {
 
   if (!confirmRelease) return;
 
-  step("\nUpdating package versions...");
+  step("Updating package versions...");
   updateVersions(targetVersion);
 
   // generate changelog
-  step("\nGenerating changelog...");
+  step("Generating changelog...");
   let configPath = "";
-  if (options.config) {
-    configPath = resolve(options.config);
-    // 然后你就可以使用 configObject 对应的配置了
-    logger.info(configPath, "configPath");
+  if (changelogConfig) {
+    configPath = resolve(changelogConfig);
   }
-  const changelogArgs = ["-p", "angular", "-i", "CHANGELOG.md"];
+  const changelogArgs = [
+    "-p",
+    "angular",
+    "-i",
+    "CHANGELOG.md",
+    "-s",
+    "-r",
+    "0",
+  ];
   if (configPath) {
+    logger.info("changelog config at:\u{1F447}\n\t", configPath);
     changelogArgs.push("-c", configPath);
   }
   await run(`conventional-changelog`, changelogArgs);
@@ -121,23 +139,37 @@ async function main() {
 
   if (!changelogOk) return;
 
-  step("\nUpdating lockfile...");
+  step("Updating lockfile...");
+  let cmd = "npm";
+  if (cmds.length === 1) {
+    cmd = cmds[0];
+  } else if (cmds.length > 1) {
+    const { result } = await prompt<{
+      result: string;
+    }>({
+      type: "select",
+      name: "result",
+      message: "Select cmd type",
+      choices: cmds,
+    });
+    cmd = result;
+  }
   try {
-    await run(`yarn`, ["install", "--prefer-offline"]);
+    await run(cmd, ["install", "--prefer-offline"]);
   } catch (error) {
-    await run(`yarn`, ["install"]);
+    await run(cmd, ["install"]);
   }
   const { stdout } = await run("git", ["diff"], { stdio: "pipe" });
   if (stdout) {
-    step("\nCommitting changes...");
+    step("Committing changes...");
     await runIfNotDry("git", ["add", "-A"]);
     await runIfNotDry("git", ["commit", "-m", `release: v${targetVersion}`]);
   } else {
-    console.log("No changes to commit.");
+    logger.info("No changes to commit.");
   }
 
   // push to GitHub
-  step("\nPushing to GitHub...");
+  step("Pushing to GitHub...");
   const { yes: publishOk } = await prompt<{ yes: boolean }>({
     type: "confirm",
     name: "yes",
@@ -163,8 +195,8 @@ async function main() {
     }
   }
 
-  if (isDryRun) {
-    console.log(`\nDry run finished - run git diff to see package changes.`);
+  if (isTest) {
+    logger.success(`\nDry run finished - run git diff to see package changes.`);
   }
 }
 
@@ -172,11 +204,11 @@ function updateVersions(version: string) {
   pkgPath = resolve(process.cwd(), "package.json");
   pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
   pkg.version = version;
-  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
+  writeFileSync(pkgPath, JSON.stringify(pkg, null, "\t") + "\n");
 }
 
 main().catch((err) => {
   updateVersions(currentVersion);
-  console.error(err);
+  logger.error("\n", err);
   process.exit(1);
 });

@@ -2,6 +2,7 @@ const nodeResolve = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
 const babel = require("@rollup/plugin-babel");
 const typescript = require("@rollup/plugin-typescript");
+const terser = require("@rollup/plugin-terser");
 
 const { defineConfig } = require("rollup");
 
@@ -21,5 +22,6 @@ module.exports = defineConfig({
       exclude: ["node_modules/**"],
       presets: ["@babel/preset-env"],
     }),
+    terser(),
   ],
 });

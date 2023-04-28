@@ -8,11 +8,11 @@
   },
   "scripts": {
     "start": "node lib/cli.js",
-    "build": "yarn fix && rollup -c",
-    "fix": "yarn prettier && tsc && yarn lint",
+    "build": "pnpm fix && rollup -c",
+    "fix": "pnpm prettier && tsc && pnpm lint",
     "lint": "eslint **/*.{js,cjs,mjs,ts,cts,mts} --fix",
-    "prettier": "prettier --ignore-path .eslintignore **/*.{js,cjs,mjs,ts,cts,mts} --loglevel warn --write",
-    "prepublishOnly": "yarn build"
+    "prettier": "prettier --ignore-path .eslintignore **/*.{js,cjs,mjs,ts,cts,mts} --write",
+    "prepublishOnly": "pnpm build"
   },
   "repository": {
     "type": "git",
@@ -34,8 +34,8 @@
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-terser": "^0.4.1",
     "@rollup/plugin-typescript": "^11.1.0",
-    "@types/minimist": "^1.2.2",
     "@types/node": "^18.16.1",
     "@types/semver": "^7.3.13",
     "@typescript-eslint/parser": "^5.59.1",
@@ -50,7 +50,6 @@
     "execa": "^7.1.1",
     "ghooks": "^2.0.4",
     "lint-staged": "^13.2.2",
-    "minimist": "^1.2.8",
     "prettier": "^2.8.8",
     "rollup": "^3.21.0",
     "semver": "^7.5.0",
@@ -59,7 +58,7 @@
   },
   "lint-staged": {
     "*.{js,cjs,mjs,ts,cts,mts}": [
-      "yarn fix"
+      "pnpm fix"
     ]
   },
   "config": {
