@@ -51,7 +51,6 @@
     "prettier": "^2.8.8",
     "rollup": "^3.21.0",
     "semver": "^7.5.0",
-    "standard-changelog": "^2.0.27",
     "tslib": "^2.5.0",
     "typescript": "^5.0.4"
   },
@@ -64,5 +63,8 @@
     "ghooks": {
       "pre-commit": "npx lint-staged --quiet --concurrent false"
     }
+  },
+  "dependencies": {
+    "standard-changelog": "^2.0.27"
   }
 }
