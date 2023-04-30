@@ -63,8 +63,5 @@
     "ghooks": {
       "pre-commit": "npx lint-staged --quiet --concurrent false"
     }
-  },
-  "dependencies": {
-    "standard-changelog": "^2.0.27"
   }
 }

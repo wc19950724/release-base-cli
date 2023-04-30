@@ -72,14 +72,16 @@ async function main() {
 
   step("Generating changelog...");
   const changelogArgs = [
-    "standard-changelog",
+    "conventional-changelog-cli",
+    "-p",
+    "angular",
     "-i",
     "CHANGELOG.md",
     "-s",
     "-r",
     "0",
   ];
-  await run("npx", changelogArgs);
+  await run("npx", ["-q", ...changelogArgs]);
   // 确认同步日志
   const changelogOk = await confirmGeneratedChangelog();
   if (!changelogOk) return;
