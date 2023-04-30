@@ -1,3 +1,12 @@
+## [0.0.1-rc.8](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.7...v0.0.1-rc.8) (2023-04-30)
+
+
+### Performance Improvements
+
+*  npx changelog ([72195ae](https://github.com/wc19950724/release-base-cli/commit/72195ae15802e046228b306c344cc77e3a9cfd0d))
+
+
+
 ## [0.0.1-rc.7](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.6...v0.0.1-rc.7) (2023-04-30)
 
 
