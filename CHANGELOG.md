@@ -1,3 +1,12 @@
+## [0.0.1](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.8...v0.0.1) (2023-04-30)
+
+
+### Performance Improvements
+
+*  error tips ([4a82859](https://github.com/wc19950724/release-base-cli/commit/4a8285950cc983e48c57aceb77077e8c625f42ef))
+
+
+
 ## [0.0.1-rc.8](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.7...v0.0.1-rc.8) (2023-04-30)
 
 
