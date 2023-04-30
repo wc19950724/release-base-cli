@@ -81,7 +81,12 @@ async function main() {
     "-r",
     "0",
   ];
-  await run("npx", ["-q", ...changelogArgs]);
+  try {
+    await run("npx", ["-q", ...changelogArgs]);
+  } catch (error) {
+    logger.error("Please try to execute again!");
+    logger.error(error);
+  }
   // 确认同步日志
   const changelogOk = await confirmGeneratedChangelog();
   if (!changelogOk) return;
@@ -113,7 +118,11 @@ async function main() {
 
     const tagOk = await confirmGenerateTag(targetVersion);
     if (tagOk) {
-      await runIfNotDry("git", ["tag", `v${targetVersion}`]);
+      try {
+        await runIfNotDry("git", ["tag", `v${targetVersion}`]);
+      } catch (error) {
+        logger.error(error);
+      }
       await runIfNotDry("git", [
         "push",
         "origin",
