@@ -1,16 +1,21 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { program } from "commander";
-import { prompt } from "enquirer";
-import { execa } from "execa";
-import { ReleaseType } from "semver";
-import semverInc from "semver/functions/inc";
 import prerelease from "semver/functions/prerelease";
 import valid from "semver/functions/valid";
 
 import { ProgramOptions } from "./types";
+import {
+  confirmGeneratedChangelog,
+  confirmGenerateTag,
+  confirmPublishGit,
+  confirmReleasing,
+  inputCustomVersion,
+  selectReleaseType,
+} from "./utils/enquirer";
 import logger from "./utils/logger";
+import { createRun, run, selectCmd, step, updateVersions } from "./utils/utils";
 
 let pkgPath = resolve(process.cwd(), "package.json");
 let pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
@@ -30,59 +35,17 @@ const options = program.opts<ProgramOptions>();
 const preId = options.preId || prerelease(currentVersion)?.[0]?.toString();
 const isTest = !!options.test;
 
-const cmds: string[] = [];
-if (existsSync("package-lock.json")) {
-  cmds.push("npm");
-} else if (existsSync("yarn.lock")) {
-  cmds.push("yarn");
-} else if (existsSync("pnpm-lock.yaml")) {
-  cmds.push("pnpm");
-}
-
-const versionIncrements: ReleaseType[] = [
-  "patch",
-  "minor",
-  "major",
-  ...((preId
-    ? ["prepatch", "preminor", "premajor", "prerelease"]
-    : []) as ReleaseType[]),
-];
-
-const inc = (i: ReleaseType) => semverInc(currentVersion, i, preId);
-const run = (bin: string, args: string[], opts = {}) => {
-  try {
-    return execa(bin, args, { stdio: "inherit", ...opts });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
-const dryRun = async (bin: string, args: string[], opts = {}) =>
-  logger.warn(`[test run] ${bin} ${args.join(" ")}  `, JSON.stringify(opts));
-const runIfNotDry = isTest ? dryRun : run;
-const step = (msg: string) => logger.success("\n", msg);
+const runIfNotDry = createRun(isTest);
 
 async function main() {
   let targetVersion = "";
 
-  // no explicit version, offer suggestions
-  const { release } = await prompt<{
-    release: ReleaseType | "custom";
-  }>({
-    type: "select",
-    name: "release",
-    message: "Select release type",
-    choices: versionIncrements
-      .map((i) => `${i} (${inc(i)})`)
-      .concat(["custom"]),
-  });
+  // 选择发布类型
+  const release = await selectReleaseType(preId);
 
   if (release === "custom") {
-    const { version } = await prompt<{ version: string }>({
-      type: "input",
-      name: "version",
-      message: "Input custom version",
-      initial: currentVersion,
-    });
+    // 输入自定义版本
+    const version = await inputCustomVersion(currentVersion);
     targetVersion = version;
   } else {
     const releaseMatchArray = release.match(/\((.*)\)/);
@@ -97,46 +60,33 @@ async function main() {
     throw new Error(`invalid target version: ${targetVersion}`);
   }
 
-  const { yes: confirmRelease } = await prompt<{ yes: boolean }>({
-    type: "confirm",
-    name: "yes",
-    message: `Releasing v${targetVersion}. Confirm?`,
-  });
+  // 确认版本号
+  const confirmRelease = await confirmReleasing(targetVersion);
 
   if (!confirmRelease) return;
 
   step("Updating package versions...");
-  updateVersions(targetVersion);
+  // 更新版本号
+  await updateVersions(targetVersion);
   logger.log("Package version updated: ", targetVersion);
 
-  // generate changelog
   step("Generating changelog...");
-  const changelogArgs = ["-i", "CHANGELOG.md", "-s", "-r", "0"];
-  await run("standard-changelog", changelogArgs);
-
-  const { yes: changelogOk } = await prompt<{ yes: boolean }>({
-    type: "confirm",
-    name: "yes",
-    message: `Changelog generated. Does it look good?`,
-  });
-
+  const changelogArgs = [
+    "standard-changelog",
+    "-i",
+    "CHANGELOG.md",
+    "-s",
+    "-r",
+    "0",
+  ];
+  await run("npx", changelogArgs);
+  // 确认同步日志
+  const changelogOk = await confirmGeneratedChangelog();
   if (!changelogOk) return;
 
   step("Updating lockfile...");
-  let cmd = "npm";
-  if (cmds.length === 1) {
-    cmd = cmds[0];
-  } else if (cmds.length > 1) {
-    const { result } = await prompt<{
-      result: string;
-    }>({
-      type: "select",
-      name: "result",
-      message: "Select cmd type",
-      choices: cmds,
-    });
-    cmd = result;
-  }
+  // 选择node命令工具
+  const cmd = await selectCmd();
   try {
     await run(cmd, ["install", "--prefer-offline"]);
   } catch (error) {
@@ -151,24 +101,15 @@ async function main() {
     logger.info("No changes to commit.");
   }
 
-  // push to GitHub
   step("Pushing to GitHub...");
-  const { yes: publishOk } = await prompt<{ yes: boolean }>({
-    type: "confirm",
-    name: "yes",
-    message: `Publish to Git?`,
-  });
 
+  // 确认推送到git
+  const publishOk = await confirmPublishGit();
   if (publishOk) {
     await runIfNotDry("git", ["push"]);
-    // Generate & Publish Tag
     step("Generate & Publish Tag...");
-    const { yes: tagOk } = await prompt<{ yes: boolean }>({
-      type: "confirm",
-      name: "yes",
-      message: `Generate & Publish Tag: v${targetVersion}?`,
-    });
 
+    const tagOk = await confirmGenerateTag(targetVersion);
     if (tagOk) {
       await runIfNotDry("git", ["tag", `v${targetVersion}`]);
       await runIfNotDry("git", [
@@ -184,15 +125,9 @@ async function main() {
   }
 }
 
-function updateVersions(version: string) {
-  pkgPath = resolve(process.cwd(), "package.json");
-  pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
-  pkg.version = version;
-  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
-}
-
-main().catch((err) => {
-  updateVersions(currentVersion);
+main().catch(async (err) => {
+  // 更新版本号
+  await updateVersions(currentVersion);
   logger.error("\n", err);
   process.exit(1);
 });
