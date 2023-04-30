@@ -1,3 +1,12 @@
+## [0.0.1-rc.7](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.6...v0.0.1-rc.7) (2023-04-30)
+
+
+### Performance Improvements
+
+*  utils & npx ([3e57086](https://github.com/wc19950724/release-base-cli/commit/3e57086aa8bf38ebb535e5eee937a128b9ba8d9a))
+
+
+
 ## [0.0.1-rc.6](https://github.com/wc19950724/release-base-cli/compare/v0.0.1-rc.5...v0.0.1-rc.6) (2023-04-29)
 
 
