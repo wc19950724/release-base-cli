@@ -99,6 +99,10 @@ async function main() {
   } catch (error) {
     await run(cmd, ["install"]);
   }
+  step("Rebuilding...");
+  // 重新构建
+  await run(cmd, ["build"]);
+
   const { stdout } = await run("git", ["diff"], { stdio: "pipe" });
   if (stdout) {
     step("Committing changes...");
