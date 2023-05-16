@@ -4,7 +4,7 @@
   "description": "自动生成CHANGELOG.md并发布的工具",
   "main": "cli.js",
   "bin": {
-    "release-cli": "cli"
+    "release-cli": "cli.js"
   },
   "scripts": {
     "start": "node lib/cli.js",
