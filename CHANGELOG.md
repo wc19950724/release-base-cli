@@ -1,4 +1,9 @@
-## [0.0.2](https://github.com/wc19950724/release-base-cli/compare/v0.0.1...v0.0.2) (2023-05-16)
+## [0.0.3](https://github.com/wc19950724/release-base-cli/compare/v0.0.1...v0.0.3) (2023-05-16)
+
+
+### Features
+
+*  build script ([ab56746](https://github.com/wc19950724/release-base-cli/commit/ab56746fc0ae18f58942d3b49e948268d9ef5d8e))
 
 
 
