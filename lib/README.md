@@ -4,25 +4,25 @@
 
 To begin, you'll need to install `release-base-cli`:
 
-```console
+```js
 npm install release-base-cli --save-dev
 ```
 
 or
 
-```console
+```js
 yarn add -D release-base-cli
 ```
 
 or
 
-```console
+```js
 pnpm add -D release-base-cli
 ```
 
 **package.json**
 
-```js
+```json
 "scripts": {
     "release": "release-cli"
 },
