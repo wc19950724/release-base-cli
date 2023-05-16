@@ -1,3 +1,7 @@
+## [0.0.4](https://github.com/wc19950724/release-base-cli/compare/v0.0.3...v0.0.4) (2023-05-16)
+
+
+
 ## [0.0.3](https://github.com/wc19950724/release-base-cli/compare/v0.0.1...v0.0.3) (2023-05-16)
 
 
