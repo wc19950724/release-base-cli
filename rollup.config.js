@@ -11,7 +11,6 @@ module.exports = defineConfig({
   output: {
     file: "lib/cli.js",
     format: "cjs",
-    banner: "#!/usr/bin/env node", // 添加 Node.js 环境运行的标识
   },
   plugins: [
     nodeResolve(),

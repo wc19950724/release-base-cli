@@ -1,0 +1,23 @@
+{
+  "name": "release-base-cli",
+  "version": "0.0.2",
+  "description": "自动生成CHANGELOG.md并发布的工具",
+  "main": "cli.js",
+  "bin": {
+    "release-cli": "cli"
+  },
+  "keywords": [
+    "release",
+    "changelog"
+  ],
+  "author": "948533798@qq.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wc19950724/release-base-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wc19950724/release-base-cli/issues"
+  },
+  "homepage": "https://github.com/wc19950724/release-base-cli#readme"
+}

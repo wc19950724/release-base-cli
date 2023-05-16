@@ -2,13 +2,13 @@
   "name": "release-base-cli",
   "version": "0.0.2",
   "description": "自动生成CHANGELOG.md并发布的工具",
-  "main": "lib/cli.js",
+  "main": "cli.js",
   "bin": {
-    "release-cli": "bin/cli"
+    "release-cli": "cli"
   },
   "scripts": {
     "start": "node lib/cli.js",
-    "build": "pnpm fix && rollup -c",
+    "build": "pnpm fix && node scripts/build.js",
     "fix": "pnpm prettier && tsc && pnpm lint",
     "lint": "eslint **/*.{js,cjs,mjs,ts,cts,mts} --fix",
     "prettier": "prettier --ignore-path .eslintignore **/*.{js,cjs,mjs,ts,cts,mts} --write"
