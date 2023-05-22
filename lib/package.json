@@ -1,6 +1,6 @@
 {
   "name": "release-base-cli",
-  "version": "0.0.5-rc.4",
+  "version": "0.0.5-rc.5",
   "description": "自动生成CHANGELOG.md并发布的工具",
   "bin": {
     "release-cli": "cli.js"
@@ -18,5 +18,12 @@
   "bugs": {
     "url": "https://github.com/wc19950724/release-base-cli/issues"
   },
-  "homepage": "https://github.com/wc19950724/release-base-cli#readme"
+  "homepage": "https://github.com/wc19950724/release-base-cli#readme",
+  "dependencies": {
+    "arg": "^5.0.2",
+    "semver": "^7.5.0",
+    "inquirer": "^9.2.4",
+    "execa": "^7.1.1",
+    "picocolors": "^1.0.0"
+  }
 }

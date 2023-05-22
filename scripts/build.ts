@@ -37,6 +37,7 @@ const formatPkgJson = () => {
     "repository",
     "bugs",
     "homepage",
+    "dependencies",
   ];
 
   const npmPkg: {
