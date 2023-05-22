@@ -1,6 +1,6 @@
 {
   "name": "release-base-cli",
-  "version": "0.0.5-rc.3",
+  "version": "0.0.5-rc.4",
   "description": "自动生成CHANGELOG.md并发布的工具",
   "bin": {
     "release-cli": "cli.js"

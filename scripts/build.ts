@@ -10,7 +10,6 @@ const buildConfig = {
   outDir: "lib",
   format: "cjs",
   clean: true,
-  minify: true,
 };
 
 const rootPath = path.dirname(__dirname);
