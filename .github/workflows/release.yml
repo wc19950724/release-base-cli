@@ -29,6 +29,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
+        with:
+          fetch-depth: 0
       - run: npx changelogithub
         env:
           GITHUB_TOKEN: ${{ secrets.GHP_TOKEN }}
