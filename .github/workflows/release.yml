@@ -29,11 +29,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
-      - name: Create Release for Tag
-        id: release_tag
-        uses: actions/create-release@main
+      - run: npx changelogithub
         env:
           GITHUB_TOKEN: ${{ secrets.GHP_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          body: "Please refer to [CHANGELOG.md](https://github.com/${{ github.event.repository.owner.login }}/${{ github.event.repository.name }}/blob/master/CHANGELOG.md) for details."
