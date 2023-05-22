@@ -13,7 +13,10 @@
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "newLine": "LF"
+    "newLine": "LF",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "exclude": ["node_modules", "lib"]
 }

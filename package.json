@@ -1,21 +1,16 @@
 {
   "name": "release-base-cli",
-  "version": "0.0.4",
+  "version": "0.0.5-rc.0",
   "description": "自动生成CHANGELOG.md并发布的工具",
-  "main": "cli.js",
   "bin": {
     "release-cli": "cli.js"
   },
   "scripts": {
-    "start": "node lib/cli.js",
-    "build": "pnpm fix && node scripts/build.js",
+    "start": "esno src/cli.ts",
+    "build": "esno scripts/build.ts",
     "fix": "pnpm prettier && tsc && pnpm lint",
     "lint": "eslint **/*.{js,cjs,mjs,ts,cts,mts} --fix",
     "prettier": "prettier --ignore-path .eslintignore **/*.{js,cjs,mjs,ts,cts,mts} --write"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/wc19950724/release-base-cli.git"
   },
   "keywords": [
     "release",
@@ -23,35 +18,34 @@
   ],
   "author": "948533798@qq.com",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wc19950724/release-base-cli.git"
+  },
   "bugs": {
     "url": "https://github.com/wc19950724/release-base-cli/issues"
   },
   "homepage": "https://github.com/wc19950724/release-base-cli#readme",
   "devDependencies": {
-    "@babel/core": "^7.21.4",
-    "@babel/preset-env": "^7.21.4",
-    "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-commonjs": "^24.1.0",
-    "@rollup/plugin-node-resolve": "^15.0.2",
-    "@rollup/plugin-terser": "^0.4.1",
-    "@rollup/plugin-typescript": "^11.1.0",
+    "@types/inquirer": "^9.0.3",
     "@types/node": "^18.16.1",
     "@types/semver": "^7.3.13",
     "@typescript-eslint/parser": "^5.59.1",
-    "chalk-cjs": "^5.2.0",
-    "commander": "^10.0.1",
+    "arg": "^5.0.2",
     "enquirer": "^2.3.6",
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-simple-import-sort": "^10.0.0",
+    "esno": "^0.16.3",
     "execa": "^7.1.1",
     "ghooks": "^2.0.4",
+    "inquirer": "^9.2.4",
     "lint-staged": "^13.2.2",
+    "picocolors": "^1.0.0",
     "prettier": "^2.8.8",
-    "rollup": "^3.21.0",
     "semver": "^7.5.0",
-    "tslib": "^2.5.0",
+    "tsup": "^6.7.0",
     "typescript": "^5.0.4"
   },
   "lint-staged": {

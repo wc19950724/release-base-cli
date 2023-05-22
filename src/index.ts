@@ -1,96 +1,52 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import fs from "node:fs";
+import path from "node:path";
 
-import { program } from "commander";
-import prerelease from "semver/functions/prerelease";
-import valid from "semver/functions/valid";
-
-import { ProgramOptions } from "./types";
+import { Options } from "@/types";
 import {
-  confirmGeneratedChangelog,
   confirmGenerateTag,
   confirmPublishGit,
   confirmReleasing,
-  inputCustomVersion,
+  getOptions,
+  logger,
+  run,
+  selectCmd,
   selectReleaseType,
-} from "./utils/enquirer";
-import logger from "./utils/logger";
-import { createRun, run, selectCmd, step, updateVersions } from "./utils/utils";
+  setOptions,
+  step,
+} from "@/utils";
 
-let pkgPath = resolve(process.cwd(), "package.json");
-let pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
-const currentVersion = pkg.version;
+const steps = async () => {
+  const targetVersion = await selectVersion();
+  if (!targetVersion) return;
+  await updateVersions(targetVersion);
+  await reBuild();
+  await pushGit(targetVersion);
+};
 
-program.name(pkg.name).version(currentVersion);
-program
-  .option(
-    "-p, --preId <preId>",
-    "example: release-cli -p (alpha | beta | rc | ...)"
-  )
-  .option("-t, --test", "example: release-cli -t")
-  .parse(process.argv);
+/** 选择版本号 */
+const selectVersion = async () => {
+  const pkgPath = path.resolve(process.cwd(), "package.json");
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+  const currentVersion = pkg.version;
 
-const options = program.opts<ProgramOptions>();
-
-const preId = options.preId || prerelease(currentVersion)?.[0]?.toString();
-const isTest = !!options.test;
-
-const runIfNotDry = createRun(isTest);
-
-async function main() {
-  let targetVersion = "";
-
-  // 选择发布类型
-  const release = await selectReleaseType(preId);
-
-  if (release === "custom") {
-    // 输入自定义版本
-    const version = await inputCustomVersion(currentVersion);
-    targetVersion = version;
-  } else {
-    const releaseMatchArray = release.match(/\((.*)\)/);
-    if (releaseMatchArray?.length) {
-      targetVersion = releaseMatchArray[1];
-    } else {
-      throw new Error("Version is required!");
-    }
-  }
-
-  if (!valid(targetVersion)) {
-    throw new Error(`invalid target version: ${targetVersion}`);
-  }
-
+  const targetVersion = await selectReleaseType(currentVersion);
   // 确认版本号
   const confirmRelease = await confirmReleasing(targetVersion);
+  return confirmRelease && targetVersion;
+};
 
-  if (!confirmRelease) return;
-
+/** 更新版本号 */
+const updateVersions = async (version: string) => {
   step("Updating package versions...");
-  // 更新版本号
-  await updateVersions(targetVersion);
-  logger.log("Package version updated: ", targetVersion);
+  const pkgPath = path.resolve(process.cwd(), "package.json");
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+  pkg.version = version;
+  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
+  logger.log(`Package version updated: ${version}`);
+};
 
-  step("Generating changelog...");
-  const changelogArgs = [
-    "conventional-changelog-cli",
-    "-p",
-    "angular",
-    "-i",
-    "CHANGELOG.md",
-    "-s",
-    "-r",
-    "0",
-  ];
-  try {
-    await run("npx", ["-q", ...changelogArgs]);
-  } catch (error) {
-    logger.error("Please try to execute again!");
-    logger.error(error);
-  }
-  // 确认同步日志
-  const changelogOk = await confirmGeneratedChangelog();
-  if (!changelogOk) return;
-
+/** 重新构建项目 */
+const reBuild = async () => {
   step("Updating lockfile...");
   // 选择node命令工具
   const cmd = await selectCmd();
@@ -102,47 +58,40 @@ async function main() {
   step("Rebuilding...");
   // 重新构建
   await run(cmd, ["build"]);
+};
 
+/** 提交暂存 */
+const pushGit = async (targetVersion: string) => {
+  const { commit } = getOptions();
+  step("Pushing to GitHub...");
   const { stdout } = await run("git", ["diff"], { stdio: "pipe" });
   if (stdout) {
     step("Committing changes...");
-    await runIfNotDry("git", ["add", "-A"]);
-    await runIfNotDry("git", ["commit", "-m", `release: v${targetVersion}`]);
-  } else {
-    logger.info("No changes to commit.");
+    await run("git", ["add", "-A"]);
+    await run("git", ["commit", "-m", `${commit}${targetVersion}`]);
   }
-
-  step("Pushing to GitHub...");
 
   // 确认推送到git
   const publishOk = await confirmPublishGit();
   if (publishOk) {
-    await runIfNotDry("git", ["push"]);
+    await run("git", ["push"]);
     step("Generate & Publish Tag...");
 
     const tagOk = await confirmGenerateTag(targetVersion);
     if (tagOk) {
       try {
-        await runIfNotDry("git", ["tag", `v${targetVersion}`]);
+        await run("git", ["tag", `v${targetVersion}`]);
       } catch (error) {
-        logger.error(error);
+        logger.error((error as Error).stack);
       }
-      await runIfNotDry("git", [
-        "push",
-        "origin",
-        `refs/tags/v${targetVersion}`,
-      ]);
+      await run("git", ["push", "origin", `refs/tags/v${targetVersion}`]);
     }
   }
+};
 
-  if (isTest) {
-    logger.success(`\nDry run finished - run git diff to see package changes.`);
-  }
-}
+const main = async (params: Options) => {
+  await setOptions(params);
+  await steps();
+};
 
-main().catch(async (err) => {
-  // 更新版本号
-  await updateVersions(currentVersion);
-  logger.error("\n", err);
-  process.exit(1);
-});
+export default main;

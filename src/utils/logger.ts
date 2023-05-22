@@ -1,24 +1,28 @@
-import chalk from "chalk-cjs";
+import c from "picocolors";
 
-function error(...args: any[]) {
-  console.log(chalk.redBright(...args));
-}
+export const error = (msg?: string) => {
+  console.log(c.red(msg));
+};
 
-function warn(...args: any[]) {
-  console.log(chalk.yellowBright(...args));
-}
+export const warn = (msg?: string) => {
+  console.log(c.yellow(msg));
+};
 
-function info(...args: any[]) {
-  console.log(chalk.blueBright(...args));
-}
+export const info = (msg?: string) => {
+  console.log(c.blue(msg));
+};
 
-function success(...args: any[]) {
-  console.log(chalk.greenBright(...args));
-}
+export const success = (msg?: string) => {
+  console.log(c.green(msg));
+};
 
-function log(...args: any[]) {
-  console.log(...args);
-}
+export const log = (msg?: string) => {
+  console.log(msg);
+};
+
+export const gray = (msg?: string) => {
+  console.log(c.gray(msg));
+};
 
 export default {
   error,
@@ -26,4 +30,5 @@ export default {
   info,
   success,
   log,
+  gray,
 };
