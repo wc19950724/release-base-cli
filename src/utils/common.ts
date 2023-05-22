@@ -3,7 +3,7 @@ import { Options } from "@/types";
 export const optionsDefault: Required<Options> = {
   preid: "beta",
   commit: "release: v",
-  quiet: true,
+  quiet: false,
 };
 
 const options = optionsDefault;

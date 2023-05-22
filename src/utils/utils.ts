@@ -6,12 +6,17 @@ import { execa } from "execa";
 import { inc as semverInc, ReleaseType } from "semver";
 
 import { CmdType } from "@/types";
-import { logger, optionsDefault } from "@/utils";
+import { getOptions, logger, optionsDefault } from "@/utils";
 
 /** 终端运行函数 */
 export const run = async (bin: string, args: string[], opts = {}) => {
+  const { quiet } = getOptions();
+
   try {
-    return await execa(bin, args, { stdio: "inherit", ...opts });
+    return await execa(bin, args, {
+      stdio: quiet ? "ignore" : "inherit",
+      ...opts,
+    });
   } catch (error) {
     return Promise.reject(error);
   }
@@ -61,7 +66,10 @@ export const createInc = (preid?: string) => {
 };
 
 /** 执行步骤log */
-export const step = (msg: string) => logger.success(`\n${msg}`);
+export const step = (msg: string) => {
+  const { quiet } = getOptions();
+  if (!quiet) logger.success(`\n${msg}`);
+};
 
 /** 更新版本号 */
 export const updateVersions = async (version: string) => {
