@@ -34,10 +34,11 @@ pnpm add -D release-base-cli
 **release Description**
 
 ```markdown
--V, --version output the version number
--p, --preId <preId> example: release-cli -p (alpha | beta | rc | ...)
--t, --test example: release-cli -t
--h, --help display help for command
+    -h, --help:    cli help
+    -v, --version: package version
+    -p, --preid:   version prefix default 'beta'
+    -c, --commit:  commit message default 'release: v'
+    -q, --quiet:   quiet release default false
 ```
 
 ## License
