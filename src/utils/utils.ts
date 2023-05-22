@@ -1,18 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { prompt } from "enquirer";
 import { execa } from "execa";
-import { inc as semverInc, ReleaseType } from "semver";
 
 import { CmdType } from "@/types";
-import { getOptions, logger, optionsDefault } from "@/utils";
+import { cmdPrompt, getOptions, logger } from "@/utils";
 
 /** 终端运行函数 */
 export const run = async (bin: string, args: string[], opts = {}) => {
-  const { quiet } = getOptions();
-
   try {
+    const { quiet } = getOptions();
     return await execa(bin, args, {
       stdio: quiet ? "ignore" : "inherit",
       ...opts,
@@ -42,34 +39,14 @@ export const selectCmd = async () => {
   if (cmds.length === 1) {
     command = cmds[0];
   } else if (cmds.length > 1) {
-    const { result } = await prompt<{
-      result: CmdType;
-    }>({
-      type: "select",
-      name: "result",
-      message: "Select cmd type",
-      choices: cmds,
-    });
+    const result = await cmdPrompt(cmds);
     command = result;
   }
   return command;
 };
 
-/** 创建版本选择函数 */
-export const createInc = (preid?: string) => {
-  const pkgPath = path.resolve(process.cwd(), "package.json");
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
-  const currentVersion: string = pkg.version;
-  return (i: ReleaseType) =>
-    semverInc(currentVersion, i, preid || optionsDefault.preid) ||
-    currentVersion;
-};
-
 /** 执行步骤log */
-export const step = (msg: string) => {
-  const { quiet } = getOptions();
-  if (!quiet) logger.success(`\n${msg}`);
-};
+export const step = (msg: string) => logger.success(`\n${msg}`);
 
 /** 更新版本号 */
 export const updateVersions = async (version: string) => {

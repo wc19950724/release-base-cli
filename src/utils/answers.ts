@@ -1,9 +1,23 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import inquirer from "inquirer";
 import * as semver from "semver";
 
-import { createInc, getOptions } from "@/utils";
+import { CmdType } from "@/types";
+import { getOptions, optionsDefault } from "@/utils";
 
 const prompts = inquirer.createPromptModule();
+
+/** 创建版本选择函数 */
+export const createInc = (preid?: string) => {
+  const pkgPath = path.resolve(process.cwd(), "package.json");
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+  const currentVersion: string = pkg.version;
+  return (i: semver.ReleaseType) =>
+    semver.inc(currentVersion, i, preid || optionsDefault.preid) ||
+    currentVersion;
+};
 
 export const getIncVersion = () => {
   const { preid } = getOptions();
@@ -103,4 +117,17 @@ export const confirmGenerateTag = async (targetVersion: string) => {
     message: `Generate & Publish Tag: v${targetVersion}?`,
   });
   return yes;
+};
+
+/** 选择命令工具 */
+export const cmdPrompt = async (cmds: CmdType[]) => {
+  const { result } = await prompts<{
+    result: CmdType;
+  }>({
+    type: "list",
+    name: "result",
+    message: "Select cmd type",
+    choices: cmds,
+  });
+  return result;
 };
