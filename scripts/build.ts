@@ -5,11 +5,16 @@ import { build } from "tsup";
 
 import { step } from "./utils";
 
+const pkgPath = path.resolve(process.cwd(), "package.json");
+const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+const external = Object.keys(pkg.dependencies || {}).map((key) => key);
+
 const buildConfig = {
   entry: ["src/cli.ts"],
   outDir: "lib",
   format: "cjs",
   clean: true,
+  external,
 };
 
 const rootPath = path.dirname(__dirname);

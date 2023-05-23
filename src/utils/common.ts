@@ -4,6 +4,7 @@ export const optionsDefault: Required<Options> = {
   preid: "beta",
   commit: "release: v",
   quiet: false,
+  test: false,
 };
 
 const options = optionsDefault;
@@ -15,3 +16,6 @@ export const setOptions = async (params?: Options) => {
 
 /** 获取配置选项 */
 export const getOptions = () => options;
+
+/** 文字边距值 */
+export const PADDING = 16;

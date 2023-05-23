@@ -8,8 +8,14 @@ import { cmdPrompt, getOptions, logger } from "@/utils";
 
 /** 终端运行函数 */
 export const run = async (bin: string, args: string[], opts = {}) => {
+  const { test, quiet } = getOptions();
+
+  if (test) {
+    logger.warn(`[test run] ${bin} ${args.join(" ")}  ${JSON.stringify(opts)}`);
+    return;
+  }
+
   try {
-    const { quiet } = getOptions();
     return await execa(bin, args, {
       stdio: quiet ? "ignore" : "inherit",
       ...opts,
@@ -54,4 +60,12 @@ export const updateVersions = async (version: string) => {
   const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
   pkg.version = version;
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
+};
+
+/** 对齐输出内容 */
+export const createFormat = (msgObj: Record<string, string>) => {
+  const maxLength = Object.keys(msgObj).reduce((maxLength, key) => {
+    return key.length > maxLength ? key.length : maxLength;
+  }, 0);
+  return (key: string, fillString = " ") => key.padEnd(maxLength, fillString);
 };

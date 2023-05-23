@@ -34,11 +34,12 @@ pnpm add -D release-base-cli
 **release Description**
 
 ```markdown
-    -h, --help:    cli help
+    -h, --help   : cli help
     -v, --version: package version
-    -p, --preid:   version prefix default 'beta'
-    -c, --commit:  commit message default 'release: v'
-    -q, --quiet:   quiet release default false
+    -p, --preid  : version prefix  default 'beta'
+    -c, --commit : commit message  default 'release: v'
+    -q, --quiet  : quiet release   default false
+    -t, --test   : test release    default false
 ```
 
 ## License

@@ -1,13 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import inquirer from "inquirer";
+import prompts from "prompts";
 import * as semver from "semver";
 
 import { CmdType } from "@/types";
 import { getOptions, optionsDefault } from "@/utils";
-
-const prompts = inquirer.createPromptModule();
 
 /** 创建版本选择函数 */
 export const createInc = (preid?: string) => {
@@ -43,34 +41,29 @@ export const getIncVersion = () => {
 /** 选择发布类型 */
 export const selectReleaseType = async (currentVersion: string) => {
   const incVersion = getIncVersion();
-  const answers = await prompts<{
-    release: semver.ReleaseType | "custom";
-    custom: string;
-  }>([
+  const answers = await prompts([
     {
-      type: "list",
+      type: "autocomplete",
       name: "release",
       message: "\nSelect release type",
-      default: "patch",
-      pageSize: 10,
+      initial: "patch",
       choices: [
         ...Object.keys(incVersion).map((i) => ({
           value: i,
-          name: `${i} (${incVersion[i]})`,
+          title: `${i.padStart(10, " ")} (${incVersion[i]})`,
         })),
         {
           value: "custom",
-          name: "custom",
+          title: "custom",
         },
       ],
     },
     {
-      type: "input",
+      type: (prev) => (prev === "custom" ? "text" : null),
       name: "custom",
       message: "Enter the new version number:",
-      default: currentVersion,
-      when: (previousAnswer) => previousAnswer.release === "custom",
-      validate: (custom) => {
+      initial: currentVersion,
+      validate: (custom: string) => {
         return semver.valid(custom)
           ? true
           : "That's not a valid version number";
@@ -87,7 +80,7 @@ export const selectReleaseType = async (currentVersion: string) => {
 export const confirmReleasing = async (targetVersion: string) => {
   const { quiet } = getOptions();
   if (quiet) return true;
-  const { yes } = await prompts<{ yes: boolean }>({
+  const { yes } = await prompts({
     type: "confirm",
     name: "yes",
     message: `Releasing v${targetVersion}. Confirm?`,
@@ -99,7 +92,7 @@ export const confirmReleasing = async (targetVersion: string) => {
 export const confirmPublishGit = async () => {
   const { quiet } = getOptions();
   if (quiet) return true;
-  const { yes } = await prompts<{ yes: boolean }>({
+  const { yes } = await prompts({
     type: "confirm",
     name: "yes",
     message: `Publish to Git?`,
@@ -111,7 +104,7 @@ export const confirmPublishGit = async () => {
 export const confirmGenerateTag = async (targetVersion: string) => {
   const { quiet } = getOptions();
   if (quiet) return true;
-  const { yes } = await prompts<{ yes: boolean }>({
+  const { yes } = await prompts({
     type: "confirm",
     name: "yes",
     message: `Generate & Publish Tag: v${targetVersion}?`,
@@ -121,13 +114,14 @@ export const confirmGenerateTag = async (targetVersion: string) => {
 
 /** 选择命令工具 */
 export const cmdPrompt = async (cmds: CmdType[]) => {
-  const { result } = await prompts<{
-    result: CmdType;
-  }>({
+  const { result } = await prompts({
     type: "list",
     name: "result",
     message: "Select cmd type",
-    choices: cmds,
+    choices: cmds.map((cmd) => ({
+      value: cmd,
+      title: cmd,
+    })),
   });
   return result;
 };

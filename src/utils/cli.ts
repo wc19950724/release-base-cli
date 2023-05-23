@@ -5,7 +5,7 @@ import arg from "arg";
 import c from "picocolors";
 
 import { Options } from "@/types";
-import { logger, optionsDefault } from "@/utils";
+import { createFormat, logger, optionsDefault, PADDING } from "@/utils";
 
 export const spec: arg.Spec = {
   "--help": Boolean,
@@ -13,11 +13,13 @@ export const spec: arg.Spec = {
   "--preid": String,
   "--commit": String,
   "--quiet": Boolean,
+  "--test": Boolean,
   "-h": "--help",
   "-v": "--version",
   "-p": "--preid",
   "-c": "--commit",
   "-q": "--quiet",
+  "-t": "--test",
 };
 
 export const formatArgs = (args: arg.Result<typeof spec>): Options => {
@@ -34,6 +36,9 @@ export const formatArgs = (args: arg.Result<typeof spec>): Options => {
       case "--quiet":
         options.quiet = value;
         break;
+      case "--test":
+        options.test = value;
+        break;
       default:
         break;
     }
@@ -46,19 +51,24 @@ export const argsTips = (key: string) => {
   let tip = "";
   switch (key) {
     case "-h":
-      tip = " ".repeat(3) + "cli help";
+      tip = "cli help";
       break;
     case "-v":
-      tip = " ".repeat(0) + "package version";
+      tip = "package version";
       break;
     case "-p":
-      tip = " ".repeat(2) + `version prefix default '${optionsDefault.preid}'`;
+      tip =
+        "version prefix".padEnd(PADDING) + `default '${optionsDefault.preid}'`;
       break;
     case "-c":
-      tip = " ".repeat(1) + `commit message default '${optionsDefault.commit}'`;
+      tip =
+        "commit message".padEnd(PADDING) + `default '${optionsDefault.commit}'`;
       break;
     case "-q":
-      tip = " ".repeat(2) + `quiet release default ${optionsDefault.quiet}`;
+      tip = "quiet release".padEnd(PADDING) + `default ${optionsDefault.quiet}`;
+      break;
+    case "-t":
+      tip = "test release".padEnd(PADDING) + `default ${optionsDefault.quiet}`;
       break;
     default:
       break;
@@ -79,9 +89,12 @@ export const helpHandler = () => {
       transformedSpec.set(key, key);
     }
   }
+  const formatText = createFormat(Object.fromEntries(transformedSpec));
+
   for (const [key, value] of transformedSpec) {
-    logger.warn(`\t${key}: ${c.bold(argsTips(value))}`);
+    logger.warn(`${formatText(key)}: ${c.bold(argsTips(value))}`);
   }
+  logger.log("\n");
 };
 
 export const versionHandler = () => {
