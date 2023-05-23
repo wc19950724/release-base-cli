@@ -6,17 +6,29 @@ import { CmdType } from "@/types";
 import { cmdPrompt, getOptions, logger } from "@/utils";
 
 /** 终端运行函数 */
-export const run = async (bin: string, args: string[]) => {
+export const run = async (
+  bin: string,
+  args: string[],
+  opts?: Parameters<typeof execSync>[1]
+) => {
   const { test, quiet } = getOptions();
 
   if (test) {
-    logger.warn(`[test run] ${bin} ${args.join(" ")}`);
+    logger.warn(
+      `[test run] ${bin} ${args.join(" ")}  ${opts ? JSON.stringify(opts) : ""}`
+    );
     return;
   }
 
   try {
-    const stdout = execSync(`${bin} ${args.join(" ")}`);
-    !quiet && console.log(`stdout: ${stdout}`);
+    const stdout = execSync(`${bin} ${args.join(" ")}`, {
+      stdio: quiet ? "ignore" : "inherit",
+      ...opts,
+      encoding: "utf-8",
+    });
+    if (stdout && opts?.stdio !== "pipe") {
+      logger.log(stdout);
+    }
     return stdout;
   } catch (error) {
     return Promise.reject(error);
