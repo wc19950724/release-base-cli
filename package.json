@@ -46,8 +46,7 @@
   },
   "dependencies": {
     "prompts": "^2.4.2",
-    "semver": "^7.5.0",
-    "execa": "^7.1.1"
+    "semver": "^7.5.0"
   },
   "lint-staged": {
     "*.{js,cjs,mjs,ts,cts,mts}": [

@@ -64,8 +64,8 @@ const reBuild = async () => {
 const pushGit = async (targetVersion: string) => {
   const { commit } = getOptions();
   step("Pushing to GitHub...");
-  const result = await run("git", ["diff"], { stdio: "pipe" });
-  if (result?.stdout) {
+  const stdout = await run("git", ["diff"]);
+  if (stdout) {
     step("Committing changes...");
     await run("git", ["add", "-A"]);
     await run("git", ["commit", "-m", `${commit}${targetVersion}`]);

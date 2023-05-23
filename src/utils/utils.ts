@@ -1,25 +1,23 @@
+import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-
-import { execa } from "execa";
 
 import { CmdType } from "@/types";
 import { cmdPrompt, getOptions, logger } from "@/utils";
 
 /** 终端运行函数 */
-export const run = async (bin: string, args: string[], opts = {}) => {
+export const run = async (bin: string, args: string[]) => {
   const { test, quiet } = getOptions();
 
   if (test) {
-    logger.warn(`[test run] ${bin} ${args.join(" ")}  ${JSON.stringify(opts)}`);
+    logger.warn(`[test run] ${bin} ${args.join(" ")}`);
     return;
   }
 
   try {
-    return await execa(bin, args, {
-      stdio: quiet ? "ignore" : "inherit",
-      ...opts,
-    });
+    const stdout = execSync(`${bin} ${args.join(" ")}`);
+    !quiet && console.log(`stdout: ${stdout}`);
+    return stdout;
   } catch (error) {
     return Promise.reject(error);
   }
