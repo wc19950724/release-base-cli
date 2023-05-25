@@ -1,6 +1,6 @@
 {
   "name": "release-base-cli",
-  "version": "0.0.6",
+  "version": "1.0.0",
   "description": "update version & push tag",
   "bin": {
     "release-cli": "cli.js"
