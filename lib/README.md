@@ -1,4 +1,4 @@
-# 自动生成 CHANGELOG.md & release
+# update version & push tag
 
 ## Getting Started
 

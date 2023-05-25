@@ -1,7 +1,7 @@
 {
   "name": "release-base-cli",
   "version": "0.0.6",
-  "description": "自动生成CHANGELOG.md并发布的工具",
+  "description": "update version & push tag",
   "bin": {
     "release-cli": "cli.js"
   },
