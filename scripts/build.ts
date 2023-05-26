@@ -15,6 +15,9 @@ const buildConfig = {
   format: "cjs",
   clean: true,
   external,
+  splitting: true,
+  treeshake: true,
+  minify: true,
 };
 
 const rootPath = path.dirname(__dirname);
