@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/wc19950724/release-base-cli#readme",
   "dependencies": {
+    "cac": "^6.7.14",
     "prompts": "^2.4.2",
     "semver": "^7.5.0"
   }

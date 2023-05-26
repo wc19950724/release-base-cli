@@ -71,11 +71,3 @@ export const updateVersions = async (version: string) => {
   pkg.version = version;
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
 };
-
-/** 对齐输出内容 */
-export const createFormat = (msgObj: Record<string, string>) => {
-  const maxLength = Object.keys(msgObj).reduce((maxLength, key) => {
-    return key.length > maxLength ? key.length : maxLength;
-  }, 0);
-  return (key: string, fillString = " ") => key.padEnd(maxLength, fillString);
-};

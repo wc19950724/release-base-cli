@@ -84,6 +84,7 @@ export const confirmReleasing = async (targetVersion: string) => {
     type: "confirm",
     name: "yes",
     message: `Releasing v${targetVersion}. Confirm?`,
+    initial: true,
   });
   return yes;
 };
@@ -96,6 +97,7 @@ export const confirmPublishGit = async () => {
     type: "confirm",
     name: "yes",
     message: `Publish to Git?`,
+    initial: true,
   });
   return yes;
 };
@@ -108,6 +110,7 @@ export const confirmGenerateTag = async (targetVersion: string) => {
     type: "confirm",
     name: "yes",
     message: `Generate & Publish Tag: v${targetVersion}?`,
+    initial: true,
   });
   return yes;
 };
