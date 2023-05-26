@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { Options } from "@/types";
 import {
+  commitPlaceholder,
   confirmGenerateTag,
   confirmPublishGit,
   confirmReleasing,
@@ -68,7 +69,11 @@ const pushGit = async (targetVersion: string) => {
   if (stdout) {
     step("Committing changes...");
     await run("git", ["add", "-A"]);
-    await run("git", ["commit", "-m", `"${commit}${targetVersion}"`]);
+    await run("git", [
+      "commit",
+      "-m",
+      commit.replace(commitPlaceholder, targetVersion),
+    ]);
   }
 
   // 确认推送到git

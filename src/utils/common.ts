@@ -1,8 +1,10 @@
 import { Options } from "@/types";
 
+export const commitPlaceholder = "[v]";
+
 export const optionsDefault: Required<Options> = {
   preid: "beta",
-  commit: "release: v",
+  commit: `release: v${commitPlaceholder}`,
   quiet: false,
   test: false,
 };

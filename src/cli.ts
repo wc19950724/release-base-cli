@@ -8,10 +8,10 @@ const cli = async () => {
   const program = cac("release-cli");
   program
     .command("")
-    .option("-p, --preid", "version prefix", {
+    .option("-p, --preid <preid>", "version prefix", {
       default: optionsDefault.preid,
     })
-    .option("-c, --commit", "commit message", {
+    .option("-c, --commit <message>", "commit message", {
       default: optionsDefault.commit,
     })
     .option("-q, --quiet", "quiet release", {
