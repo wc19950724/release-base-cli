@@ -72,7 +72,7 @@ const pushGit = async (targetVersion: string) => {
     await run("git", [
       "commit",
       "-m",
-      commit.replace(commitPlaceholder, targetVersion),
+      `"${commit.replace(commitPlaceholder, targetVersion)}"`,
     ]);
   }
 
